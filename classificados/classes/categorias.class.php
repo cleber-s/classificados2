@@ -7,7 +7,7 @@ class Categorias {
     global $pdo;
 
     $sql = $pdo->query("SELECT * FROM categorias");
-    if($sql->rowCount() > 0) {
+    if(!empty($sql) && $sql->rowCount() > 0) {
       $array = $sql->fetchAll();
     }
 

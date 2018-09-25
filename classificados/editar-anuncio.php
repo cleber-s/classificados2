@@ -6,6 +6,7 @@ if(empty($_SESSION['cLogin'])) { //CASO O USUARIO NAO ESTEJA LOGADO, VAI PARA A 
 <?php
 exit;
 }
+$get_id = $_GET['id'];
 
 require 'classes/anuncios.class.php';
 $a = new Anuncios();
@@ -15,22 +16,22 @@ if(isset($_POST['titulo']) && !empty($_POST['titulo'])) {
   $valor = addslashes($_POST['valor']);
   $descricao = addslashes($_POST['descricao']);
   $estado = addslashes($_POST['estado']);
+
   if(isset($_FILES['fotos'])) {
     $fotos = $_FILES['fotos'];
   } else {
     $fotos = array(); //DESSA FORMA NÃO DÁ ERRO QUANDO NÃO HOUVEREM FOTOS
-}
-  $a->editAnuncio($titulo, $categoria, $valor, $descricao, $estado, $fotos, $_GET['id']);
+  }
+  $a->editAnuncio($titulo, $categoria, $valor, $descricao, $estado, $fotos, $get_id);
 
 ?>
   <div class="alert alert-success">
     Produto editado com sucesso!
   </div>
 <?php
-} else {
-  echo "Falhoou! ";
 }
 
+$info = array();
 if(isset($_GET['id']) && !empty($_GET['id'])) {
   $info = $a->getAnuncio($_GET['id']);
 } else {
@@ -53,7 +54,14 @@ exit;
         require 'classes/categorias.class.php';
         $c = new Categorias();
         $cats = $c->getLista();
+
         foreach ($cats as $cat):
+          if(empty($cat)):
+            ?>
+            <option>Sem categorias</option>
+            <?php
+            break;
+          endif;
         ?>
         <option value="<?php echo $cat['id']; ?>" <?php echo ($info['id_categoria']==$cat['id'])?'selected="selected"':''; ?>><?php echo utf8_encode($cat['nome']); ?></option>
         <?php endforeach; ?>
@@ -86,7 +94,7 @@ exit;
 
     <div class="form-group">
       <label for="add_foto">Fotos do anúncio: </label>
-      <input type="file" name"fotos[]" multiple /><br/>
+      <input type="file" name="fotos[]" multiple id="add_foto"><br>
 
         <div class="panel panel-default">
           <div class="panel-heading">Fotos do Anúncio</div>

@@ -70,7 +70,7 @@ class Anuncios {
     $sql->bindValue(":descricao", $descricao);
     $sql->bindValue(":valor", $valor);
     $sql->bindValue(":estado", $estado);
-    $sql->bindValue(":id", $id);
+    $sql->bindValue(":id", intVal($id));
     $sql->execute();
 
 //SALVA IMAGENS -OTIMIZADAS- NO SERVIDOR --INICIO
@@ -79,7 +79,7 @@ class Anuncios {
       for($q=0;$q<count($fotos['tmp_name']);$q++) {
         $tipo = $fotos['type'][$q];
         if(in_array($tipo, array('image/jpeg', 'image/png'))) {
-          $tmpname = md5(time().rand(0,9999)).'.jpg';
+          $tmpname = md5(time().rand(0,9999)).$fotos['name'][$q];
           move_uploaded_file($fotos['tmp_name'][$q], 'assets/images/anuncios/'.$tmpname);
 
           list($width_orig, $height_orig) = getimagesize('assets/images/anuncios/'.$tmpname);
@@ -107,10 +107,11 @@ class Anuncios {
           //SALVA IMAGENS -OTIMIZADAS- NO SERVIDOR -- FIM
 
           //SALVA IMAGENS NO BANCO
-          $sql = $pdo->prepare("INSERT INTO anuncios_imagens SET id_anuncio = :id_anuncio, url = :url");
-          $sql->bindValue(":id_anuncio", $id);
+          $sql = $pdo->prepare("insert into anuncios_imagens set id_anuncio = :id, url = :url");
+          $sql->bindValue(":id", intVal($id));
           $sql->bindValue(":url", $tmpname);
           $sql->execute();
+
         }
       }
     } else {

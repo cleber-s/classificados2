@@ -24,6 +24,7 @@ if(isset($_POST['titulo']) && !empty($_POST['titulo'])) {
   </div>
 <?php
 }
+$lista = array();
 ?>
 <div class="container">
   <h1>Meus Anúncios - Adicionar Anúncio</h1>
@@ -37,13 +38,20 @@ if(isset($_POST['titulo']) && !empty($_POST['titulo'])) {
         require 'classes/categorias.class.php';
         $c = new Categorias();
         $cats = $c->getLista();
+        $lista = $cats;
         foreach ($cats as $cat):
+          if(empty($cat)):
+            ?>
+            <option>Não tem categorias</option>
+            <?php
+            break;
+          endif;
         ?>
         <option value="<?php echo $cat['id']; ?>"><?php echo utf8_encode($cat['nome']); ?></option>
         <?php endforeach; ?>
       </select>
     </div>
-
+    <?php print_r($lista); ?>
     <div class="form-group">
       <label for="titulo">Título: </label>
       <input type="text" name="titulo" id="titulo" class="form-control" />
